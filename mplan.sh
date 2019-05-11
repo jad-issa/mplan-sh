@@ -4,6 +4,11 @@
 
 dir=$HOME/.mplan
 
+# Create the directory if it doesn't exist already
+if [ ! -d "$dir" ]; then
+    mkdir -p "$dir"
+fi
+
 case "$1" in
     "show")
 	for f in $(ls $dir)
