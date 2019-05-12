@@ -22,15 +22,17 @@ case "$1" in
 	cat $dir/$count
 	;;
 
+    "edit")
+    [ -z "$EDITOR" ] && echo "EDITOR variable is empty, please set it" || 
+        { [ -z "$2" ] && { let count++; echo $count > $dir/.count; $EDITOR $dir/$count; } ||
+            $EDITOR $dir/$2; }
+    ;;
+
     "rm")
 	echo -e "[0;31mX[0m\t[0;32mID: $2[0m" # Red X and ID in green
-	if [ "$2" = "all" ]; then
-        rm $dir/*
-        echo 0 > $dir/.count
-    else
-        cat $dir/$2
-        rm $dir/$2
-    fi
+	[ "$2" = "all" ] &&
+        { rm $dir/*; echo 0 > $dir/.count; } ||
+        { cat $dir/$2; rm $dir/$2; }
 	;;
 
     *)
@@ -38,7 +40,9 @@ case "$1" in
 	echo '      mplan ls                                  list current notes'
 	echo '      mplan add content                          create a new note'
     echo '            Note: omit `content` to use standard input (via `cat`)'
+    echo '      mplan edit ID                                edit note by ID'
+    echo '            Note: omit `ID` to create a new note with the editor.'
 	echo '      mplan rm ID                                remove note by ID'
-    echo '            Or: `rm all` which will reset the ID counter.'
+    echo '            Or: `rm all` which resets the ID counter.'
 	echo '      mplan help                                   print this help'
 esac
